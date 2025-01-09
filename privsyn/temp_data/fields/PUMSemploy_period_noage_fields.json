@@ -1,0 +1,24 @@
+{
+    "field_types": {
+        "num_attr_1": "int-exponential",
+        "cat_attr_1": "categorical",
+        "cat_attr_2": "categorical",
+        "cat_attr_3": "categorical",
+        "cat_attr_4": "categorical",
+        "cat_attr_5": "categorical",
+        "cat_attr_6": "categorical",
+        "cat_attr_7": "categorical",
+        "cat_attr_8": "categorical",
+        "cat_attr_9": "categorical",
+        "cat_attr_10": "categorical",
+        "cat_attr_11": "categorical",
+        "cat_attr_12": "categorical",
+        "cat_attr_13": "categorical",
+        "cat_attr_14": "categorical",
+        "cat_attr_15": "categorical",
+        "y_attr": "categorical"
+    },
+    "bin_sizes": {
+        "num_attr_1": 2
+    }
+}

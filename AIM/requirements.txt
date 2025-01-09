@@ -1,0 +1,10 @@
+attrs
+numpy
+scipy
+pandas
+networkx
+matplotlib
+jax
+jaxlib
+chex
+optax

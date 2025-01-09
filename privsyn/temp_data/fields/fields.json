@@ -1,0 +1,26 @@
+{
+    "field_types": {
+        "srcip": "binned-ip",
+        "dstip": "binned-ip",
+        "srcport": "binned-port",
+        "dstport": "binned-port",
+        "proto": "categorical",
+        "ts": "timestamp",
+        "td": "float-exponential",
+        "pkt": "int-exponential",
+        "byt": "int-exponential",
+        "label": "categorical",
+        "type": "categorical"
+    },
+    "bin_sizes": {
+        "srcip": 24,
+        "dstip": 24,
+        "srcport": 1024, 
+        "dstport": 1024, 
+        "port_bin_size": 1000,
+        "ts": 10000000000,
+        "td": 2,
+        "pkt": 2,
+        "byt": 2
+    }
+}

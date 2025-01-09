@@ -1,0 +1,56 @@
+parent_dir = "TabDDPM/exp/PUMSemploy_period_noage/"
+real_data_path = "data/PUMSemploy_period_noage/"
+num_numerical_features = 1
+model_type = "mlp"
+seed = 0
+device = "cuda:0"
+
+[model_params]
+num_classes = 2
+is_y_cond = true
+
+[model_params.rtdl_params]
+d_layers = [
+    256,
+    256,
+]
+dropout = 0.0
+
+[diffusion_params]
+num_timesteps = 100
+gaussian_loss_type = "mse"
+scheduler = "cosine"
+
+
+[train.main]
+steps = 100
+lr = 0.01
+weight_decay = 1e-05
+batch_size = 512
+
+[train.T]
+seed = 0
+normalization = "minmax"
+num_nan_policy = "__none__"
+cat_nan_policy = "__none__"
+cat_min_frequency = "__none__"
+cat_encoding = "__none__"
+y_policy = "default"
+
+[sample]
+num_samples = 20000
+batch_size = 1024
+seed = 0
+
+[eval.type]
+eval_model = "mlp"
+eval_type = "synthetic"
+
+[eval.T]
+seed = 0
+normalization = "quantile"
+num_nan_policy = "__none__"
+cat_nan_policy = "__none__"
+cat_min_frequency = "__none__"
+cat_encoding = "one-hot"
+y_policy = "default"

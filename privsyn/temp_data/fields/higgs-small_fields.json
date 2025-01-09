@@ -1,0 +1,35 @@
+{
+    "field_types": {
+        "num_attr_1": "categorical",
+        "num_attr_2": "categorical",
+        "num_attr_3": "categorical",
+        "num_attr_4": "categorical",
+        "num_attr_5": "categorical",
+        "num_attr_6": "categorical",
+        "num_attr_7": "categorical",
+        "num_attr_8": "categorical",
+        "num_attr_9": "categorical",
+        "num_attr_10": "categorical",
+        "num_attr_11": "categorical",
+        "num_attr_12": "categorical",
+        "num_attr_13": "categorical",
+        "num_attr_14": "categorical",
+        "num_attr_15": "categorical",
+        "num_attr_16": "categorical",
+        "num_attr_17": "categorical",
+        "num_attr_18": "categorical",
+        "num_attr_19": "categorical",
+        "num_attr_20": "categorical",
+        "num_attr_21": "categorical",
+        "num_attr_22": "categorical",
+        "num_attr_23": "categorical",
+        "num_attr_24": "categorical",
+        "num_attr_25": "categorical",
+        "num_attr_26": "categorical",
+        "num_attr_27": "categorical",
+        "num_attr_28": "categorical",
+        "y_attr": "categorical"
+    },
+    "bin_sizes": {
+    }
+}
