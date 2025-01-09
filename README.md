@@ -1,4 +1,4 @@
-# DO Tabular Data Synthesis Benchmark
+# DP Tabular Data Synthesis Benchmark
 This is a benchmark for dp tabular data synthesis. The necessary code for the paper is all included in this repository.
 
 ## Quick Start 
@@ -28,7 +28,7 @@ If you want to try other preprocessing methods or hyper-parameter settings, you 
 python main.py aim bank cuda:0 1.0 --num_preprocess privtree --rare_threshold 0.01
 ```
 
-Finally, the deconstructed algorithms are allocated a new name, which can be delivered to `method`. For example, if you want to try PrivSyn selector with generative network synthesizer, you can try 
+Finally, the deconstructed algorithms are allocated new names, which can be delivered to `method`. For example, if you want to try PrivSyn selector with generative network synthesizer, you can try like following
 ```
 python main.py gem_syn bank cuda:0 1.0 --num_preprocess uniform_kbins --rare_threshold 0.002
 ```
