@@ -1,0 +1,11 @@
+{
+    "name": "Bank",
+    "id": "bank--default",
+    "task_type": "binclass",
+    "n_num_features": 7,
+    "n_cat_features": 9,
+    "n_classes":2,
+    "test_size": 9043,
+    "train_size": 28934,
+    "val_size": 7234 
+}

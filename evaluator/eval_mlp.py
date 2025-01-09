@@ -7,9 +7,9 @@ sys.path.append(target_path)
 
 from sklearn.utils import shuffle
 import random
-from TabDDPM.data.data_utils import *
-from TabDDPM.data.dataset import * 
-from TabDDPM.data.metrics import * 
+from evaluator.data.data_utils import *
+from evaluator.data.dataset import * 
+from evaluator.data.metrics import * 
 from pathlib import Path
 from TabDDPM.model.modules import MLP
 from skorch.regressor import NeuralNetRegressor

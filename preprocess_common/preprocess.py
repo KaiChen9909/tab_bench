@@ -200,7 +200,7 @@ class rare_merger():
         self.rare_values = []
         self.columns_for_merge = []
 
-        if self.rare_threshold > 0:
+        if self.rare_threshold >= 0:
             self.unique_count = [len(set(data[:,i])) for i in range(data.shape[1])]
             self.columns_for_merge = [i for i in range(len(self.unique_count)) if self.unique_count[i] >= self.unique_threshold]
             if len(self.columns_for_merge) > 0:
@@ -275,7 +275,7 @@ class rare_merger():
         self.rare_values = []
         self.columns_for_merge = []
 
-        if self.rare_threshold > 0:
+        if self.rare_threshold >= 0:
             self.unique_count = [len(set(data[:,i])) for i in range(data.shape[1])]
             self.columns_for_merge = [i for i in range(len(self.unique_count)) if self.unique_count[i] >= self.unique_threshold]
             if len(self.columns_for_merge) > 0:

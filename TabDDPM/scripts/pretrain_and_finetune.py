@@ -31,8 +31,9 @@ def get_model(
 #         targ.detach().mul_(rate).add_(src.detach(), alpha=1 - rate)
 
 class Trainer:
-    def __init__(self, diffusion, dataloader, lr, weight_decay, steps, device=torch.device('cuda:0'), dp_epsilon = None, dp_delta = None):
+    def __init__(self, diffusion, dataloader, lr, weight_decay, steps, device=torch.device('cuda:0'), dp_epsilon = None, dp_delta = None, report_every=False):
         self.diffusion = diffusion
+        self.report_every = report_every #if dump loss every epoch
         self.ema_model = deepcopy(self.diffusion)
         for param in self.ema_model._denoise_fn.parameters():
             param.detach_()
@@ -109,7 +110,7 @@ class Trainer:
             self._anneal_lr(step)
 
             # report loss
-            if (step + 1) % self.log_every == 0 or step <= 9:
+            if self.report_every:
                 mloss = np.around(curr_loss_multi / curr_count, 4)
                 gloss = np.around(curr_loss_gauss / curr_count, 4)
                 if (step + 1) % self.print_every == 0 or step <= 9:
@@ -118,13 +119,23 @@ class Trainer:
                 curr_count = 0
                 curr_loss_gauss = 0.0
                 curr_loss_multi = 0.0
+            else:
+                if (step + 1) % self.log_every == 0 or step <= 9:
+                    mloss = np.around(curr_loss_multi / curr_count, 4)
+                    gloss = np.around(curr_loss_gauss / curr_count, 4)
+                    if (step + 1) % self.print_every == 0 or step <= 9:
+                        print(f'Epoch {(step + 1)}/{self.n_epoch} MLoss: {mloss} GLoss: {gloss} Sum: {mloss + gloss}')
+                    self.loss_history.loc[len(self.loss_history)] =[step + 1, mloss, gloss, mloss + gloss]
+                    curr_count = 0
+                    curr_loss_gauss = 0.0
+                    curr_loss_multi = 0.0
 
             # update_ema(self.ema_model._denoise_fn.parameters(), self.diffusion._denoise_fn.parameters())
 
             step += 1
 
 
-#step 1: pretrain the model using public data # not used in this work
+
 def pretrain(
         parent_dir,
         dataset = None,
@@ -141,6 +152,7 @@ def pretrain(
         num_numerical_features = 0,
         device = torch.device('cuda:0'),
         seed = 42,
+        report_every=False,
         change_val = False
 ): 
     random.seed(seed)
@@ -176,7 +188,8 @@ def pretrain(
         lr=lr,
         weight_decay=weight_decay,
         steps=steps,
-        device=device
+        device=device,
+        report_every = report_every
     )
     
     trainer.run_loop()
@@ -191,7 +204,6 @@ def pretrain(
     torch.cuda.empty_cache()
 
 
-#fine-tune the model using sensitive data
 def finetune(
         parent_dir,
         dataset = None,
@@ -211,6 +223,7 @@ def finetune(
         seed = 0,
         dp_epsilon = None,
         dp_delta = None,
+        report_every=False
 ): 
     random.seed(seed)
     train_loader = prepare_torch_dataloader(dataset, split='train', batch_size=batch_size)
@@ -252,7 +265,8 @@ def finetune(
         steps=steps,
         device=device,
         dp_epsilon = dp_epsilon,
-        dp_delta = dp_delta
+        dp_delta = dp_delta,
+        report_every = report_every
     )
     finetuner.run_loop()
 

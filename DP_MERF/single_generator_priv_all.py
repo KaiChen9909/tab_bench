@@ -30,7 +30,7 @@ from autodp import privacy_calibrator
 from sklearn.preprocessing import OneHotEncoder, MinMaxScaler, QuantileTransformer
 from evaluator.eval_seeds import eval_seeds
 from TabDDPM.data.data_utils import dump_json
-from DP_MERF.sample import merf_generator
+from DP_MERF.sample import *
 
 
 import warnings
@@ -187,7 +187,8 @@ def merf_main(
         rho, 
         parent_dir = None,
         seed_number = 0,
-        is_priv_arg = True
+        is_priv_arg = True,
+        **kwargs
     ):
     np.random.seed(seed_number)
 
@@ -432,6 +433,8 @@ def merf_main(
 
     ##################################################################################################################
     # TRAINING THE GENERATOR
+    if args.test:
+        tvd_tracker = pd.DataFrame(columns=['epoch', 'num-num tvd', 'cat-cat tvd', 'num-cat tvd'])
 
     print('Starting Training')
 
@@ -507,12 +510,20 @@ def merf_main(
 
         if epoch % 100 == 0:
             print('epoch # and running loss are ', [epoch, running_loss])
-            training_loss_per_epoch[epoch] = running_loss
+            training_loss_per_epoch[epoch] = running_loss 
+        if args.test:
+            if (epoch % 50 == 0) or (epoch == how_many_epochs - 1):
+                tvd1, tvd2,tvd3 = tvd_summary_simple(args, numerical_samps, categorical_samps, label_input, num_encoder, kwargs.get('preprocesser', None))
+                tvd_tracker.loc[len(tvd_tracker)] = [epoch+1,tvd1,tvd2,tvd3]
+
     
     torch.save(model.state_dict(), os.path.join(parent_dir, 'merf_model.pt')) 
     
     with open(os.path.join(parent_dir, 'model_init.json'), 'w', encoding = 'utf-8') as file: 
         json.dump(model_init, file)
+
+    if args.test:
+        tvd_tracker.to_csv(os.path.join(parent_dir, 'tvd_track.csv'), header=True)
 
     generator = merf_generator(model, model_init, weights, num_encoder, num_numerical_inputs)
     return {"merf_generator": generator}

@@ -12,8 +12,8 @@ from collections import Counter
 from TabDDPM.scripts.sample import sample
 from copy import deepcopy
 from pathlib import Path
-from TabDDPM.data.dataset import read_pure_data
-from TabDDPM.data.data_utils import * 
+from evaluator.data.dataset import read_pure_data
+from evaluator.data.data_utils import * 
 from DP_MERF.sample import merf_heterogeneous_sample
 
 

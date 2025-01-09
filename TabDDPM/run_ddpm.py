@@ -31,10 +31,16 @@ from TabDDPM.data.data_utils import *
 
 
 
-def ddpm_main(args, df, domain, rho, parent_dir):
+def ddpm_main(args, df, domain, rho, parent_dir, **kwargs):
 
-    epsilon = rho*args.epsilon
-    delta = rho*args.delta
+    if args.epsilon > 0:
+        epsilon = rho*args.epsilon
+        delta = rho*args.delta 
+    else:
+        epsilon = None 
+        delta = None
+    
+    print(f'training privacy budget: ({epsilon},{delta})')
 
     base_config_path = f'TabDDPM/exp/{args.dataset}/config.toml'
     base_config = load_config(base_config_path)
@@ -65,7 +71,8 @@ def ddpm_main(args, df, domain, rho, parent_dir):
             num_numerical_features=base_config['num_numerical_features'],
             device=args.device,
             dp_epsilon = epsilon,
-            dp_delta = delta
+            dp_delta = delta,
+            report_every = args.test
         ) 
 
     sampler = ddpm_sampler(

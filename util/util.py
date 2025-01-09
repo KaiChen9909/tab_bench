@@ -2,12 +2,16 @@ import os
 import json
 
 def make_exp_dir(args):
-    if not args.test:
-        parent_dir = f'exp/{args.dataset}/{args.method}/{args.epsilon}_{args.num_preprocess}_{args.rare_threshold}'
+    if args.test:
+        parent_dir = f'exp/{args.dataset}/{args.method}/{args.epsilon}_{args.num_preprocess}_{args.rare_threshold}_test'
+        data_path = f'data/{args.dataset}/'
+        os.makedirs(parent_dir, exist_ok=True)
+    elif args.syn_test:
+        parent_dir = f'exp/{args.dataset}/{args.method}/{args.epsilon}_{args.num_preprocess}_{args.rare_threshold}_syn'
         data_path = f'data/{args.dataset}/'
         os.makedirs(parent_dir, exist_ok=True)
     else:
-        parent_dir = f'exp/{args.dataset}/{args.method}/{args.epsilon}_{args.num_preprocess}_{args.rare_threshold}_test'
+        parent_dir = f'exp/{args.dataset}/{args.method}/{args.epsilon}_{args.num_preprocess}_{args.rare_threshold}'
         data_path = f'data/{args.dataset}/'
         os.makedirs(parent_dir, exist_ok=True)
 
@@ -31,7 +35,7 @@ def prepare_eval_config(args, parent_dir):
 
 def algo_method(args):
     if args.method == 'aim':
-        from AIM_old.aim import aim_main 
+        from AIM.aim import aim_main 
         algo = aim_main
     elif args.method == 'merf':
         from DP_MERF.single_generator_priv_all import merf_main
@@ -58,20 +62,19 @@ def algo_method(args):
         from GEM.gem import gem_main 
         algo = gem_main 
     elif args.method == 'gumbel_select':
-        from util.combine_exp_select import gumbel_select_main
+        from reconstruct_algo.combine_exp_select import gumbel_select_main
         algo = gumbel_select_main
     elif args.method == 'privsyn_select':
-        from util.combine_exp_select import privsyn_select_main
+        from reconstruct_algo.combine_exp_select import privsyn_select_main
         algo = privsyn_select_main 
     elif args.method == 'gsd_syn':
-        from util.combine_exp_gsd_syn import gsd_syn_main 
+        from reconstruct_algo.combine_exp_gsd_syn import gsd_syn_main 
         algo = gsd_syn_main 
     elif args.method == 'rap_syn':
-        from util.combine_exp_rap_syn import rap_syn_main 
+        from reconstruct_algo.combine_exp_rap_syn import rap_syn_main 
         algo = rap_syn_main    
     elif args.method == 'gem_syn':
-        from util.combine_exp_gem_syn import gem_syn_main 
+        from reconstruct_algo.combine_exp_gem_syn import gem_syn_main 
         algo = gem_syn_main   
-
     
     return algo

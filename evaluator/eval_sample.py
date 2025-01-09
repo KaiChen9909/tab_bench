@@ -4,7 +4,6 @@ import os
 def eval_sampler(
         sampling_method, 
         temp_config, 
-        dataset, 
         device=None, 
         preprocesser=None,
         **kwargs

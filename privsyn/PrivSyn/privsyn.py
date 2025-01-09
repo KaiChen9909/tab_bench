@@ -107,8 +107,6 @@ class PrivSyn():
         #######################################################################################################
 
 
-
-        
         ########################################### helper function ###########################################
     def load_data(self):
         self.logger.info("loading dataset %s" % (self.dataset_name,))
@@ -255,8 +253,7 @@ class PrivSyn():
         self.synthesized_df = pd.DataFrame(data=np.zeros([self.args['num_synthesize_records'], self.num_attributes], dtype=np.uint32),
                                            columns=self.original_dataset.domain.attrs)
         self.error_tracker = pd.DataFrame()
-        # print('iterative keys is \n', self.iterate_keys)
-
+        
         # main procedure for synthesizing records
         for key, value in self.iterate_keys.items():
             self.logger.info("synthesizing for %s" % (key,))

@@ -5,11 +5,13 @@ import argparse
 import math
 import json
 import time
+from copy import deepcopy
 from typing import Union
 from util.util import * 
 from preprocess_common.load_data_common import data_preporcesser_common
 from util.rho_cdp import cdp_rho
 from evaluator.eval_seeds import eval_seeds
+from evaluator.eval_sample import eval_sampler
 
 description = ""
 formatter = argparse.ArgumentDefaultsHelpFormatter
@@ -23,10 +25,18 @@ parser.add_argument("--num_preprocess", type=str, default='uniform_kbins')
 parser.add_argument("--rare_threshold", type=float, default=0.002) # if 0 then 3sigma
 parser.add_argument("--sample_device", help="device to synthesis, only used in some deep learning models", default=None)
 parser.add_argument("--test", action="store_true")
+parser.add_argument("--syn_test", action="store_true")
 args = parser.parse_args()
 
 if args.sample_device is None:
     args.sample_device = args.device
+
+if args.method in ['rap', 'rap_syn'] and args.dataset in ['loan', 'higgs-small']:
+    os.environ['XLA_PYTHON_CLIENT_PREALLOCATE'] = "false"
+    os.environ["XLA_PYTHON_CLIENT_ALLOCATOR"]="platform"
+    os.environ["JAX_TRACEBACK_FILTERING"] = "off"
+
+
 
 
 def main(args):
@@ -47,20 +57,27 @@ def main(args):
 
     # fitting model
     start_time = time.time()
-    generator_dict = algo_method(args)(args, df=df, domain=domain, rho=(1-preprocesser_divide)*total_rho, parent_dir=parent_dir)
+    generator_dict = algo_method(args)(args, df=df, domain=domain, rho=(1-preprocesser_divide)*total_rho, parent_dir=parent_dir, preprocesser = data_preporcesser)
     end_time = time.time()
     time_record['model fitting time'] = end_time-start_time
 
     # evaluation
     eval_config = prepare_eval_config(args, parent_dir)
-    eval_seeds(
-        eval_config, 
-        sampling_method = args.method,
-        device = args.sample_device,
-        preprocesser = data_preporcesser,
-        time_record = time_record,
-        **generator_dict
-    )
+
+    if args.syn_test:
+        test_config = deepcopy(eval_config)
+        test_config['sample']['sample_num'] = 5000
+        eval_sampler(args.method, test_config, args.sample_device, data_preporcesser, **generator_dict)
+    
+    if not args.test or not args.syn_test:
+        eval_seeds(
+            eval_config, 
+            sampling_method = args.method,
+            device = args.sample_device,
+            preprocesser = data_preporcesser,
+            time_record = time_record,
+            **generator_dict
+        ) 
 
 
 if __name__ == "__main__":

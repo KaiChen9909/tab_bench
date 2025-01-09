@@ -7,9 +7,9 @@ sys.path.append(target_path)
 
 from sklearn.utils import shuffle
 from pathlib import Path
-from TabDDPM.data.data_utils import *
-from TabDDPM.data.dataset import * 
-from TabDDPM.data.metrics import * 
+from evaluator.data.data_utils import *
+from evaluator.data.dataset import * 
+from evaluator.data.metrics import * 
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.linear_model import LogisticRegression, Ridge

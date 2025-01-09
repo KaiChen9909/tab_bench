@@ -8,8 +8,8 @@ import shutil
 import time
 from pathlib import Path
 from copy import deepcopy
-from TabDDPM.data.data_utils import * 
-from TabDDPM.data.metrics import * 
+from evaluator.data.data_utils import * 
+from evaluator.data.metrics import * 
 from evaluator.eval_catboost import train_catboost
 from evaluator.eval_mlp import train_mlp
 from evaluator.eval_transformer import train_transformer
@@ -142,7 +142,7 @@ def eval_seeds(
             temp_config['sample']['seed'] = sample_seed
             if n_datasets > 1:
                 start_time = time.time()
-                eval_sampler(sampling_method, temp_config, dataset, device, preprocesser, **kwargs) # synthesize data
+                eval_sampler(sampling_method, temp_config, device, preprocesser, **kwargs) # synthesize data
                 end_time = time.time() 
                 
                 time_all += (start_time - end_time) # a typo, show be negative

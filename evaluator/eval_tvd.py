@@ -126,6 +126,91 @@ def tvd_main(
     return l1_list
 
 
+def tvd_divide(
+    X_num_real, X_cat_real, y_real,
+    X_num_fake, X_cat_fake, y_fake,
+    dim = None, part = 'all'
+):
+    num_id = 0
+    cat_id = 0
+    if X_num_real is not None:
+        X_num_real, X_num_fake = num_divide(X_num_real, X_num_fake)
+
+    if X_num_real is None: 
+        cat_id = X_cat_real.shape[1]
+        real_data = np.concatenate((X_cat_real, y_real.reshape(-1,1)), axis=1).astype(str)
+    elif X_cat_real is None: 
+        num_id = X_num_real.shape[1]
+        real_data = np.concatenate((X_num_real, y_real.reshape(-1,1)), axis=1).astype(str)
+    else:
+        num_id = X_num_real.shape[1]
+        cat_id = X_cat_real.shape[1]
+        real_data = np.concatenate((X_num_real, X_cat_real, y_real.reshape(-1,1)), axis=1).astype(str)
+
+    if X_num_fake is None:
+        fake_data = np.concatenate((X_cat_fake, y_fake.reshape(-1,1)), axis=1).astype(str)
+    elif X_cat_fake is None: 
+        fake_data = np.concatenate((X_num_fake, y_fake.reshape(-1,1)), axis=1).astype(str)
+    else:
+        fake_data = np.concatenate((X_num_fake, X_cat_fake, y_fake.reshape(-1,1)), axis=1).astype(str)
+
+    data_shape = real_data.shape[1]
+
+    if dim == 2:
+        l1_list = {'2way margin':[]}
+        margin_error_comb = []
+        attr_num = 2
+        
+        if part == 'all':
+            combinations = tuple(itertools.combinations(np.arange(data_shape), attr_num))
+        else:
+            combinations = ()
+            if 'num-cat' in part:
+                combinations += tuple(itertools.product(range(0, num_id), range(num_id, num_id + cat_id)))
+            if 'num-num' in part:
+                combinations += tuple(itertools.combinations(np.arange(num_id), attr_num))
+            if 'cat-cat' in part :
+                combinations += tuple(itertools.combinations(np.arange(num_id, num_id + cat_id), attr_num))
+            if 'num-y' in part:
+                combinations += tuple(itertools.product(range(0, num_id), range(num_id + cat_id, num_id + cat_id + 1)))
+            if 'cat-y' in part:
+                combinations += tuple(itertools.product(np.arange(num_id, num_id + cat_id), range(num_id + cat_id, num_id + cat_id + 1)))
+            if 'num-caty' in part:
+                combinations += tuple(itertools.product(range(0, num_id), range(num_id, num_id + cat_id + 1)))
+            if 'num-num' in part:
+                combinations += tuple(itertools.combinations(np.arange(num_id), attr_num))
+            if 'caty-caty' in part :
+                combinations += tuple(itertools.combinations(np.arange(num_id, num_id + cat_id + 1), attr_num))
+            assert len(combinations) > 0
+
+        for combination in combinations:
+            margin_error_comb.append(
+                marginal_TVD(real_data, fake_data, combination, attr_num)
+            )
+
+        l1_list[f'{attr_num}way margin'].append(np.mean(margin_error_comb))
+        print(f'finish {attr_num}-way marigin TVD evaluation, error is', np.mean(margin_error_comb))
+    else:
+        l1_list = {'1way margin':[], '2way margin':[]}
+        for attr_num in range(1,3):
+            margin_error_comb = []
+
+            if attr_num == 1:
+                combinations = tuple(np.arange(real_data.shape[1]))
+            else:
+                combinations = tuple(itertools.combinations(np.arange(data_shape), attr_num))
+            
+            for combination in combinations:
+                margin_error_comb.append(
+                    marginal_TVD(real_data, fake_data, combination, attr_num)
+                )
+
+            l1_list[f'{attr_num}way margin'].append(np.mean(margin_error_comb))
+            print(f'finish {attr_num}-way marigin TVD evaluation, error is', np.mean(margin_error_comb))
+    
+    return l1_list
+
+
 
 def make_tvd(
     synthetic_data_path,

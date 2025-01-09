@@ -10,7 +10,7 @@ from sklearn.utils import shuffle
 import random 
 from pathlib import Path
 from pprint import pprint
-from TabDDPM.data.metrics import MetricsReport
+from evaluator.data.metrics import MetricsReport
 from catboost import CatBoostClassifier, CatBoostRegressor
 from sklearn.metrics import classification_report, r2_score
 
