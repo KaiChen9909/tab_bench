@@ -16,7 +16,7 @@ The code for running experiments is in main.py. The detailed description of the 
 
 
 ### How to run 
-We give some simple example on algorithm AIM. Firstly, make sure the datasets are put in the fold `data/`
+We give some simple example. Firstly, make sure the datasets are put in the correct fold (in these examples, the fold is `data/bank`). 
 
 After you activate your enviroment, try the following code to make an overall evaluation.
 ```
