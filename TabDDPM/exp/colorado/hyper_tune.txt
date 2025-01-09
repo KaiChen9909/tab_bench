@@ -1,54 +1,0 @@
-nohup: ignoring input
-[I 2024-09-05 22:21:19,019] A new study created in memory with name: no-name-92453e8d-f1dd-410b-a421-456feb8eb5b8
-  0%|          | 0/20 [00:00<?, ?it/s]/u/nkp2mr/kaic/dp_diffusion_synthesis/TabDDPM/hyper_tune.py:51: FutureWarning: suggest_loguniform has been deprecated in v3.0.0. This feature will be removed in v6.0.0. See https://github.com/optuna/optuna/releases/tag/v3.0.0. Use suggest_float(..., log=True) instead.
-  lr = trial.suggest_loguniform('lr', 1e-5, 1e-3)
-                                        0%|          | 0/20 [16:55<?, ?it/s]                                        0%|          | 0/20 [16:55<?, ?it/s]  0%|          | 0/20 [16:55<?, ?it/s]
-model_params: {'num_classes': 3, 'is_y_cond': True, 'rtdl_params': {'d_layers': [2048, 2048, 2048, 4096], 'dropout': 0.0}, 'd_in': 732}
-Epoch 1/30 MLoss: 0.504 GLoss: 0.0 Sum: 0.504
-Epoch 2/30 MLoss: 0.3918 GLoss: 0.0 Sum: 0.3918
-Epoch 3/30 MLoss: 0.3711 GLoss: 0.0 Sum: 0.3711
-Epoch 4/30 MLoss: 0.3603 GLoss: 0.0 Sum: 0.3603
-Epoch 5/30 MLoss: 0.3528 GLoss: 0.0 Sum: 0.3528
-Epoch 6/30 MLoss: 0.3484 GLoss: 0.0 Sum: 0.3484
-Epoch 7/30 MLoss: 0.3445 GLoss: 0.0 Sum: 0.3445
-Epoch 8/30 MLoss: 0.3422 GLoss: 0.0 Sum: 0.3422
-Epoch 9/30 MLoss: 0.3383 GLoss: 0.0 Sum: 0.3383
-Epoch 10/30 MLoss: 0.3366 GLoss: 0.0 Sum: 0.3366
-Epoch 20/30 MLoss: 0.3281 GLoss: 0.0 Sum: 0.3281
-Epoch 30/30 MLoss: 0.3186 GLoss: 0.0 Sum: 0.3186
-finetune model path: TabDDPM/exp/colorado/many-exps/0
-Sampling ... 
-[W 2024-09-05 22:38:14,602] Trial 0 failed with parameters: {'lr': 0.00012520653814999459, 'batch_size': 1024, 'n_layers': 2, 'd_first': 11, 'd_middle': 11, 'd_last': 12, 'steps': 30, 'num_timesteps': 100} because of the following error: ValueError("'a' cannot be empty unless no samples are taken").
-Traceback (most recent call last):
-  File "/u/nkp2mr/anaconda3/envs/kctorch_base/lib/python3.10/site-packages/optuna/study/_optimize.py", line 196, in _run_trial
-    value_or_values = func(trial)
-  File "/u/nkp2mr/kaic/dp_diffusion_synthesis/TabDDPM/hyper_tune.py", line 113, in objective
-    sample(
-  File "/u/nkp2mr/kaic/dp_diffusion_synthesis/./TabDDPM/scripts/sample.py", line 143, in sample
-    X_cat = D.reverse_cat_rare(X_cat)
-  File "/u/nkp2mr/kaic/dp_diffusion_synthesis/./TabDDPM/data/dataset.py", line 104, in reverse_cat_rare
-    X_cat[idx, column_idx] = np.random.choice(self.cat_rare_dict[column_idx], size=len(idx), replace = True)
-  File "mtrand.pyx", line 915, in numpy.random.mtrand.RandomState.choice
-ValueError: 'a' cannot be empty unless no samples are taken
-[W 2024-09-05 22:38:14,615] Trial 0 failed with value None.
-Traceback (most recent call last):
-  File "/u/nkp2mr/kaic/dp_diffusion_synthesis/TabDDPM/hyper_tune.py", line 158, in <module>
-    study.optimize(objective, n_trials=20, show_progress_bar=True)
-  File "/u/nkp2mr/anaconda3/envs/kctorch_base/lib/python3.10/site-packages/optuna/study/study.py", line 451, in optimize
-    _optimize(
-  File "/u/nkp2mr/anaconda3/envs/kctorch_base/lib/python3.10/site-packages/optuna/study/_optimize.py", line 62, in _optimize
-    _optimize_sequential(
-  File "/u/nkp2mr/anaconda3/envs/kctorch_base/lib/python3.10/site-packages/optuna/study/_optimize.py", line 159, in _optimize_sequential
-    frozen_trial = _run_trial(study, func, catch)
-  File "/u/nkp2mr/anaconda3/envs/kctorch_base/lib/python3.10/site-packages/optuna/study/_optimize.py", line 247, in _run_trial
-    raise func_err
-  File "/u/nkp2mr/anaconda3/envs/kctorch_base/lib/python3.10/site-packages/optuna/study/_optimize.py", line 196, in _run_trial
-    value_or_values = func(trial)
-  File "/u/nkp2mr/kaic/dp_diffusion_synthesis/TabDDPM/hyper_tune.py", line 113, in objective
-    sample(
-  File "/u/nkp2mr/kaic/dp_diffusion_synthesis/./TabDDPM/scripts/sample.py", line 143, in sample
-    X_cat = D.reverse_cat_rare(X_cat)
-  File "/u/nkp2mr/kaic/dp_diffusion_synthesis/./TabDDPM/data/dataset.py", line 104, in reverse_cat_rare
-    X_cat[idx, column_idx] = np.random.choice(self.cat_rare_dict[column_idx], size=len(idx), replace = True)
-  File "mtrand.pyx", line 915, in numpy.random.mtrand.RandomState.choice
-ValueError: 'a' cannot be empty unless no samples are taken
