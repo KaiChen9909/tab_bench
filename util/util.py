@@ -35,46 +35,46 @@ def prepare_eval_config(args, parent_dir):
 
 def algo_method(args):
     if args.method == 'aim':
-        from AIM.aim import aim_main 
+        from method.AIM.aim import aim_main 
         algo = aim_main
     elif args.method == 'merf':
-        from DP_MERF.single_generator_priv_all import merf_main
+        from method.DP_MERF.single_generator_priv_all import merf_main
         algo = merf_main
     elif args.method == 'llm':
-        from LLM.run_llm import llm_main
+        from method.LLM.run_llm import llm_main
         algo = llm_main 
     elif args.method == 'gsd':
-        from private_gsd.run_gsd import gsd_main 
+        from method.private_gsd.run_gsd import gsd_main 
         algo = gsd_main 
     elif args.method == 'privsyn':
-        from privsyn.run_privsyn import privsyn_main
+        from method.privsyn.run_privsyn import privsyn_main
         algo = privsyn_main 
     elif args.method == 'ddpm':
-        from TabDDPM.run_ddpm import ddpm_main
+        from method.TabDDPM.run_ddpm import ddpm_main
         algo = ddpm_main
     elif args.method == 'mrf':
-        from PrivMRF.mrf_main import mrf_main
+        from method.PrivMRF.mrf_main import mrf_main
         algo = mrf_main 
     elif args.method == 'rap':
-        from RAP.main import rap_main 
+        from method.RAP.main import rap_main 
         algo = rap_main
     elif args.method == 'gem':
-        from GEM.gem import gem_main 
+        from method.GEM.gem import gem_main 
         algo = gem_main 
     elif args.method == 'gumbel_select':
-        from reconstruct_algo.combine_exp_select import gumbel_select_main
+        from method.reconstruct_algo.combine_exp_select import gumbel_select_main
         algo = gumbel_select_main
     elif args.method == 'privsyn_select':
-        from reconstruct_algo.combine_exp_select import privsyn_select_main
+        from method.reconstruct_algo.combine_exp_select import privsyn_select_main
         algo = privsyn_select_main 
     elif args.method == 'gsd_syn':
-        from reconstruct_algo.combine_exp_gsd_syn import gsd_syn_main 
+        from method.reconstruct_algo.combine_exp_gsd_syn import gsd_syn_main 
         algo = gsd_syn_main 
     elif args.method == 'rap_syn':
-        from reconstruct_algo.combine_exp_rap_syn import rap_syn_main 
+        from method.reconstruct_algo.combine_exp_rap_syn import rap_syn_main 
         algo = rap_syn_main    
     elif args.method == 'gem_syn':
-        from reconstruct_algo.combine_exp_gem_syn import gem_syn_main 
+        from method.reconstruct_algo.combine_exp_gem_syn import gem_syn_main 
         algo = gem_syn_main   
     
     return algo

@@ -12,7 +12,7 @@ import random
 import warnings
 import itertools
 from torch.utils.data import DataLoader, TensorDataset
-from TabDDPM.data.data_utils import *
+from evaluator.data.data_utils import *
 from copy import deepcopy
 from pathlib import Path
 from sklearn.pipeline import make_pipeline
@@ -22,7 +22,7 @@ from copy import deepcopy
 from dataclasses import dataclass, astuple, replace
 from category_encoders import LeaveOneOutEncoder
 from preprocess_common.preprocess import * 
-from TabDDPM.data.metrics import calculate_metrics
+from evaluator.data.metrics import calculate_metrics
 from typing import Any, Literal, Optional, Union, cast, Tuple, Dict, List
 from tqdm import tqdm
 

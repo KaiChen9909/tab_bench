@@ -1,0 +1,17 @@
+pandas 
+numpy 
+scikit-learn
+seaborn
+torch
+jax
+cupy-cuda12x
+catboost
+xgboost
+tomli
+tomli_w
+autodp
+chex
+flax
+pynvml
+opacus
+optuna

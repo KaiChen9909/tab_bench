@@ -18,7 +18,7 @@ The code for running experiments is in main.py. The detailed description of the 
 ### How to run 
 We give some simple example. Firstly, make sure the datasets are put in the correct fold (in these examples, the fold is `data/bank`). In this example, the evaluation model is already tuned so users do not need any operation. Otherwise, you should tune the evaluation model (using the following code) before any further operation.
 ```
-python tune_eval_model.py bank mlp cv cuda:0
+python evaluator/tune_eval_model.py bank mlp cv cuda:0
 ```
 
 After you activate your enviroment, try the following code to make an overall evaluation.

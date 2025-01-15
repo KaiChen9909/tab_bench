@@ -10,7 +10,7 @@ from evaluator.eval_mlp import train_mlp
 from evaluator.eval_transformer import train_transformer
 from evaluator.eval_simple import train_simple
 from pathlib import Path
-from TabDDPM.data.data_utils import * 
+from evaluator.data.data_utils import * 
 
 import warnings
 warnings.filterwarnings('ignore')

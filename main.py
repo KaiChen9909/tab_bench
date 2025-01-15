@@ -37,8 +37,6 @@ if args.method in ['rap', 'rap_syn'] and args.dataset in ['loan', 'higgs-small']
     os.environ["JAX_TRACEBACK_FILTERING"] = "off"
 
 
-
-
 def main(args):
     print(f'privacy setting: ({args.epsilon}, {args.delta})')
     parent_dir, data_path = make_exp_dir(args)

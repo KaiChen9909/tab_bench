@@ -4,8 +4,8 @@ import sys
 target_path="./"
 sys.path.append(target_path)
 
-from TabDDPM.data.data_utils import *
-from TabDDPM.data.dataset import *
+from evaluator.data.data_utils import *
+from evaluator.data.dataset import *
 from sklearn.utils import shuffle
 import random 
 from pathlib import Path

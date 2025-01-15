@@ -11,7 +11,7 @@ from evaluator.data.data_utils import *
 from evaluator.data.dataset import * 
 from evaluator.data.metrics import * 
 from pathlib import Path
-from TabDDPM.model.modules import MLP
+from method.TabDDPM.model.modules import MLP
 from skorch.regressor import NeuralNetRegressor
 from skorch.classifier import NeuralNetClassifier
 from skorch.dataset import Dataset as SkDataset

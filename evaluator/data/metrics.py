@@ -6,7 +6,7 @@ import numpy as np
 import enum
 import sklearn.metrics as skm
 import scipy
-from TabDDPM.data.data_utils import * 
+from evaluator.data.data_utils import * 
 from typing import Any, Literal, Optional, Union, cast, Tuple, Dict, List
 
 class PredictionType(enum.Enum):

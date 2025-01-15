@@ -8,8 +8,8 @@ import itertools
 from copy import deepcopy
 from collections import Counter
 from pathlib import Path
-from TabDDPM.data.dataset import read_pure_data
-from TabDDPM.data.data_utils import dump_json 
+from evaluator.data.dataset import read_pure_data
+from evaluator.data.data_utils import dump_json 
 
 
 def num_divide(X_num_real, X_num_fake):
