@@ -35,3 +35,6 @@ Finally, the deconstructed algorithms are allocated new names, which can be deli
 ```
 python main.py gem_syn bank cuda:0 1.0 --num_preprocess uniform_kbins --rare_threshold 0.002
 ```
+
+## Results Collection
+All the results are collected in JSON format and saved in the fold `exp/{name of dataset}/{name of method}`, which can be used for further analysis.
