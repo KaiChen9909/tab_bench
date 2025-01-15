@@ -164,23 +164,6 @@ class Gumbel_Generator(Mechanism):
         # print('errors:', errors)
         # raise 'debug'
         return self.gumbel_mechanism(k, errors, rho, sizes=sizes, sigma_measure=sigma_measure)
-        # return [self.exponential_mechanism(errors, np.sqrt(8.0 * rho), 1.0)]
-
-    # def worst_approximated(self, candidates, answers, model, eps, sigma):
-    #     errors = {}
-    #     sensitivity = {}
-    #     for cl in candidates:
-    #         wgt = candidates[cl]
-    #         x = answers[cl]
-    #         bias = np.sqrt(2 / np.pi) * sigma * model.domain.size(cl)
-    #         xest = model.project(cl).datavector()
-    #         errors[cl] = wgt * (np.linalg.norm(x - xest, 1) - bias)
-    #         sensitivity[cl] = abs(wgt)
-
-    #     max_sensitivity = max(
-    #         sensitivity.values()
-    #     )  # if all weights are 0, could be a problem
-    #     return self.exponential_mechanism(errors, eps, max_sensitivity)
 
     def decide_T(self):
         if self.args.dataset == 'loan':
@@ -213,6 +196,7 @@ class Gumbel_Generator(Mechanism):
         measurements = []
         marginal_dict = {}
 
+        # initialize model
         zeros = self.structural_zeros
         engine = FactoredInference(
             data.domain, iters=self.max_iters, warm_start=True, structural_zeros=zeros
@@ -222,6 +206,7 @@ class Gumbel_Generator(Mechanism):
         self.selected = {k: False for k in data.df.columns}
         unselect = []
 
+        # adaptive selection
         for t in tqdm(range(T)):
             size_limit = self.max_model_size * (t+1) / T
             # size_limit = self.max_model_size
@@ -253,7 +238,6 @@ class Gumbel_Generator(Mechanism):
                 unselect.append(cl) # This step is necessary for gumbel select, unless it will continuously choose one marginal
 
         print(marginal_dict)
-        # raise 'debug'
 
         print("Start model construction")
         engine.iters = self.max_iters
@@ -318,6 +302,7 @@ class Privsyn_Generator(Mechanism):
         measurements = []
         marginal_dict = {}
 
+        # initialize model by one-way marginals
         initial_cliques = [
                 cl for cl in candidates if len(cl) == 1
             ]
@@ -343,6 +328,7 @@ class Privsyn_Generator(Mechanism):
         random.shuffle(cl_set)
         print("Selected marginals:", cl_set)
         
+        # model construction
         sigma = np.sqrt(len(cl_set)/(1.6*self.rho))
         for cl in cl_set:
             # cl_selected[cl] = True
@@ -351,38 +337,6 @@ class Privsyn_Generator(Mechanism):
             x = data.project(cl).datavector()
             y = x + self.gaussian_noise(sigma, n)
             measurements.append((Q, y, sigma, cl))
-        # rho_remain = 0.8 * self.rho
-        # terminate = False
-        # i=0
-        # while not terminate:
-        #     small_candidates = filter_candidates(candidates, self.model, self.max_model_size)
-        #     rho_remain -= 0.8 * self.rho/len(cl_set)
-        #     terminate = True
-        #     for cl in cl_set: 
-        #         if cl in small_candidates and not cl_selected[cl]:
-        #             cl_selected[cl] = True
-        #             n = data.domain.size(cl)
-        #             Q = Identity(n)
-        #             x = data.project(cl).datavector()
-        #             y = x + self.gaussian_noise(sigma, n)
-        #             measurements.append((Q, y, sigma, cl))
-        #             self.model = engine.estimate(measurements)
-
-        #             terminate = False 
-        #             i += 1
-        #             print(f'Used marginals: {i}/{len(cl_set)}', end='\r')
-        #             break
-        
-        # if rho_remain > 0:
-        #     selected_num = sum(value for value in cl_selected.values())
-        #     sigma = np.sqrt(selected_num/(1.6*rho_remain))
-        #     for cl in cl_selected:
-        #         if cl_selected[cl]:
-        #             n = data.domain.size(cl)
-        #             Q = Identity(n)
-        #             x = data.project(cl).datavector()
-        #             y = x + self.gaussian_noise(sigma, n)
-        #             measurements.append((Q, y, sigma, cl))
 
         print("Start model construction")
         engine.iters = self.max_iters

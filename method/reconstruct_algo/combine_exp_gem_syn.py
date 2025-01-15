@@ -171,38 +171,6 @@ class GEM(object):
         answer_diffs = real_answers - fake_answers
 
         ema_error = None
-        # get max error query /w exponential mechanism (https://arxiv.org/pdf/2004.07223.pdf Lemma 3.2)
-        # score = answer_diffs.abs().cpu().numpy()
-        # score[self.past_query_idxs.cpu()] = -np.infty # to ensure we don't resample past queries (though unlikely)
-        # EM_dist_0 = np.exp(2 * alpha * eps0 * score / (2 * sensitivity), dtype=np.float128) 
-        # EM_dist = EM_dist_0 / EM_dist_0.sum()
-        # max_query_idx = util.sample(EM_dist)
-
-        # max_query_idx = torch.tensor([max_query_idx]).to(self.device)
-        # sampled_max_error = answer_diffs[max_query_idx].abs().item()
-
-        # get noisy measurements
-        # real_answer = real_answers[max_query_idx]
-        # real_answer += np.random.normal(loc=0, scale=sensitivity / (eps0 * (1-alpha)))
-        # real_answer = torch.clamp(real_answer, 0, 1)
-
-        # keep track of past queries
-        # if len(self.past_query_idxs) == 0:
-        #     self.past_query_idxs = torch.cat([max_query_idx])
-        #     self.past_measurements = torch.cat([real_answer])
-        # elif max_query_idx not in self.past_query_idxs:
-        #     self.past_query_idxs = torch.cat((self.past_query_idxs, max_query_idx)).clone()
-        #     self.past_measurements = torch.cat((self.past_measurements, real_answer)).clone()
-
-        # errors, q_t_idxs = self._get_past_errors(fake_data, queries)
-        # idx_max = errors.argmax().item()
-        # curr_max_error = errors[idx_max].item()
-        # self.all_max_errors.append(curr_max_error)
-
-        # if ema_error is None:
-        #     ema_error = curr_max_error
-        # ema_error = ema_beta * ema_error + (1 - ema_beta) * curr_max_error
-        # threshold = 0.5 * ema_error
 
         lr = None
         for param_group in self.optimizerG.param_groups:
@@ -213,23 +181,6 @@ class GEM(object):
         step = 0
         while step < max_iters:
             optimizer.zero_grad()
-
-            # idxs = torch.arange(q_t_idxs.shape[0], device = self.device)
-
-            # above THRESHOLD
-            # mask = errors >= threshold
-            # idxs = idxs[mask]
-            # q_t_idxs = q_t_idxs[mask]
-            # errors = errors[mask]
-
-            # # get top MAX_IDXS
-            # max_errors_idxs = errors.argsort()[-max_idxs:]
-            # idxs = idxs[max_errors_idxs]
-            # q_t_idxs = q_t_idxs[max_errors_idxs]
-            # errors = errors[max_errors_idxs]
-
-            # if len(q_t_idxs) == 0: # no errors above threshold
-            #     break
 
             fake_query_attr = [fake_data[:, q] for q in queries]
             fake_answer = [attr.prod(-1).mean(axis=0) for attr in fake_query_attr]
@@ -248,16 +199,6 @@ class GEM(object):
 
             step += 1
             print(f'step {step+1}/{max_iters} finished', end = '\r')
-
-        # if hasattr(self, "schedulerG"):
-        #     self.schedulerG.step()
-
-        # fake_answers = self._get_fake_answers(fake_data, qm)
-        # answer_diffs = real_answers - fake_answers
-        # true_max_error = answer_diffs.abs().max().item()
-        # answer_diffs[self.past_query_idxs] = 0 # to ensure we don't resample past queries (though unlikely)
-
-        # self.true_max_errors.append(true_max_error)
         
     def syn(self, n_sample, preprocesser, parent_dir, resample=False):
         n_batch = int(np.ceil(n_sample/self.batch_size))
@@ -340,8 +281,7 @@ def gem_syn_main(args, df, domain, rho, parent_dir, **kwargs):
 
     # workloads = randomKwayData(data, args.workload, args.marginal, seed=args.workload_seed)
     workloads1 = [(x,) for x in proj]
-    workloads2 = PrivSyn.two_way_marginal_selection(data.df, data.domain.config, 0.1*rho, 0.8*rho)
-    # workloads = workloads1 + workloads2
+    workloads2 = PrivSyn.two_way_marginal_selection(data.df, data.domain.config, 0.1*rho, 0.8*rho) # select marginals by privsyn
 
     N = data.df.shape[0]
     # domain_dtype = data.df.max().dtype
