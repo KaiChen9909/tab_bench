@@ -47,77 +47,13 @@ def add_default_params(args):
     return args
 
 def privsyn_main(args, df, domain, rho, **kwargs):
-    # config the logger
     config_logger()
-    # os.chdir("../../")
-
-    # dataset_name = args.dataset
-    # preprocess = PreprocessNetwork(dataset_name)
-    # preprocess.load_data()
-    # eps_num, eps_cat = preprocess.build_mapping(args['epsilon'], args['num_prep'], args['rare_threshold'])
-    # preprocess.save_data(dataset_name, dataset_name + '_mapping')
-    # preprocess.reverse_mapping()
-    # preprocess.save_data_csv(dataset_name + '_syn_trivial.csv')
 
     args = vars(add_default_params(args))
     privsyn_generator = PrivSyn(args, df, domain, rho) 
 
     return {"privsyn_generator": privsyn_generator}
 
-    # synthesized_filename = '_'.join((dataset_name, str(args['epsilon'])))
-    # mapping_filename = dataset_name + '_mapping'
-
-    # postprocess = PreprocessNetwork(dataset_name)
-    # postprocess.reverse_mapping_from_files(synthesized_filename, mapping_filename)
-    # postprocess.save_data_csv(synthesized_filename + '.csv')
-
-
-
-
-
-
-
-
-
-    # this is the evaluation part for experiment
-    # with open(f'data/{dataset_name}/info.json', 'r') as file:
-    #     info = json.load(file)
-    # n_classes = info['n_classes']
-    # file.close()
-
-    # eval_config = {
-    #     'parent_dir': f'privsyn/exp/{dataset_name}_{eps}/',
-    #     'real_data_path': f'data/{dataset_name}/',
-    #     'model_params':{'num_classes': n_classes},
-    #     'synthesized_filename': synthesized_filename,
-    #     'mapping_filename': mapping_filename,
-    #     'sample': {
-    #             'seed': 0,
-    #             'sample_num': privsyn_method.args['num_synthesize_records']
-    #         },
-    #     'eval':{
-    #             'T':{
-    #                 'seed': 0,
-    #                 'normalization': "quantile",
-    #                 'num_nan_policy': None,
-    #                 'cat_nan_policy': None,
-    #                 'cat_min_frequency': None,
-    #                 'cat_encoding': "one-hot",
-    #                 'y_policy': "default"
-    #             }
-    #         }
-    # } 
-
-    # print('*'*100)
-    # print('Evaluation step')
-
-    # eval_seeds(
-    #     eval_config,
-    #     sampling_method = 'privsyn',
-    #     device = args['device'],
-    #     privsyn_method = privsyn_method,
-    #     privsyn_postprocess = postprocess
-    # )
 
 
 if __name__ == "__main__":
