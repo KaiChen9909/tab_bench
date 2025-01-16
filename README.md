@@ -62,4 +62,8 @@ python main.py gem_syn bank cuda:0 1.0 --num_preprocess uniform_kbins --rare_thr
 
 
 ## Results Collection
-All the results are collected in JSON format and saved in the fold `exp/{name of dataset}/{name of method}`, which can be used for further analysis.
+The code for evaluation is in file `evaluator/eval_seeds.py`. By default, we generate data 5 times and conduct evaluation each time we generate the data. The results are the average of all evaluations. All the results are collected in JSON format and saved in the fold `exp/{name of dataset}/{name of method}`, which can be used for further analysis. 
+
+
+## Acknowledge 
+Part of the code is from [AIM](https://github.com/ryan112358/private-pgm), [DP-MERF](https://github.com/ParkLabML/DP-MERF), [GEM](https://github.com/terranceliu/iterative-dp?tab=readme-ov-file), [Private-GSD](https://github.com/giusevtr/private_gsd), [PrivMRF](https://github.com/caicre/PrivMRF), [PrivSyn](https://github.com/agl-c/deid2_dpsyn), [RAP++](https://github.com/amazon-science/relaxed-adaptive-projection), [TabDDPM](https://github.com/yandex-research/tab-ddpm). We sincerely thank them for their contribution to the community.
