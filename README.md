@@ -1,5 +1,19 @@
 # DP Tabular Data Synthesis Benchmark
-This is a benchmark for dp tabular data synthesis. The necessary code for the paper is all included in this repository.
+This is a benchmark for dp tabular data synthesis. The necessary code for the paper is all included in this repository. 
+
+## Introduction
+This benchmark is based on the following algorithms.
+|Algorithms | Link |
+|-----------|------|
+|AIM        |[AIM: An Adaptive and Iterative Mechanism for Differentially Private Synthetic Data](https://arxiv.org/pdf/2201.12677)|
+|DP-MERF    |[DP-MERF: Differentially Private Mean Embeddings with Random Features for Practical Privacy-Preserving Data Generation](https://proceedings.mlr.press/v130/harder21a/harder21a.pdf)|
+|GEM        |[Iterative Methods for Private Synthetic Data: Unifying Framework and New Methods](https://proceedings.neurips.cc/paper/2021/file/0678c572b0d5597d2d4a6b5bd135754c-Paper.pdf)|
+|Private-GSD|[Generating Private Synthetic Data with Genetic Algorithms](https://proceedings.mlr.press/v202/liu23ag/liu23ag.pdf)|
+|PrivMRF    |[Data Synthesis via Differentially Private Markov Random Fields](https://www.vldb.org/pvldb/vol14/p2190-cai.pdf)| 
+|PrivSyn    |[PrivSyn: Differentially Private Data Synthesis](https://www.usenix.org/system/files/sec21fall-zhang-zhikun.pdf)|
+|RAP++      |[Private Synthetic Data for Multitask Learning and Marginal Queries](https://proceedings.neurips.cc/paper_files/paper/2022/file/7428310c0f97f1c6bb2ef1be99c1ec2a-Paper-Conference.pdf)|
+|TabDDPM    |[TabDDPM: Modelling Tabular Data with Diffusion Models](https://proceedings.mlr.press/v202/kotelnikov23a/kotelnikov23a.pdf)|
+
 
 ## Quick Start 
 ### Hyper-parameter Introduction
@@ -15,26 +29,37 @@ The code for running experiments is in main.py. The detailed description of the 
 * `--test`: hyper-parameter used for testing and debug. 
 
 
-### How to run 
-We give some simple example. Firstly, make sure the datasets are put in the correct fold (in these examples, the fold is `data/bank`). In this example, the evaluation model is already tuned so users do not need any operation. Otherwise, you should tune the evaluation model (using the following code) before any further operation.
+### Preparation
+The necessary packages for the environment are listed in file `requirement.txt`. Firstly, make sure the datasets are put in the correct fold (in the following examples, the fold is `data/bank`, and the necessary dataset has already been provided). In this repository, the evaluation model is already tuned so users do not need any operation. Otherwise, you should tune the evaluation model (using the following code) before any further operation.
 ```
 python evaluator/tune_eval_model.py bank mlp cv cuda:0
 ```
 
-After you activate your enviroment, try the following code to make an overall evaluation.
+
+### Overall Evaluation
+After you activate your enviroment, try the following code to make an overall evaluation. In our paper, we by default set `num_preprocess` to be "uniform_kbins" except for DP-MERF and TabDDPM, and set `rare_threshold` to 0.002 for overall evaluation. 
 ```
 python main.py aim bank cuda:0 1.0 --num_preprocess uniform_kbins --rare_threshold 0.002
 ```
 
-If you want to try other preprocessing methods or hyper-parameter settings, you can try like this 
+
+### Preprocessing Investigation
+If you want to try other preprocessing methods or preprocessing hyper-parameter settings, you can modify the value of preprocessing hyper-parameters like this 
 ```
 python main.py aim bank cuda:0 1.0 --num_preprocess privtree --rare_threshold 0.01
 ```
 
-Finally, the deconstructed algorithms are allocated new names, which can be delivered to `method`. For example, if you want to try PrivSyn selector with generative network synthesizer, you can try like following
+
+### Module Comparison 
+In the experiment section of the paper, we compare different modules by comparing the performances of different reconstructed algorithms.
+These reconstructed algorithms are allocated new names, which can be delivered to `method`. 
+For example, if you want to try PrivSyn selector with generative network synthesizer, you can try
 ```
 python main.py gem_syn bank cuda:0 1.0 --num_preprocess uniform_kbins --rare_threshold 0.002
 ```
+
+
+
 
 ## Results Collection
 All the results are collected in JSON format and saved in the fold `exp/{name of dataset}/{name of method}`, which can be used for further analysis.
