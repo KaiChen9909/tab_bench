@@ -6,12 +6,11 @@ target_path="./"
 sys.path.append(target_path)
 
 from sklearn.utils import shuffle
-import random
 from evaluator.data.data_utils import *
 from evaluator.data.dataset import * 
 from evaluator.data.metrics import * 
 from pathlib import Path
-from method.TabDDPM.model.modules import MLP
+from evaluator.util import MLP
 from skorch.regressor import NeuralNetRegressor
 from skorch.classifier import NeuralNetClassifier
 from skorch.dataset import Dataset as SkDataset
@@ -19,6 +18,8 @@ from skorch.callbacks import EarlyStopping, EpochScoring
 from skorch.helper import predefined_split
 from torch.optim import AdamW
 from torch.nn import MSELoss, BCEWithLogitsLoss, CrossEntropyLoss
+
+
 
 
 def train_mlp(
