@@ -1,0 +1,11 @@
+{
+    "parent_dir": "exp/bank/privsyn/1.0_uniform_kbins_0.002",
+    "real_data_path": "data/bank/",
+    "model_params": {
+        "num_classes": 2
+    },
+    "sample": {
+        "seed": 0,
+        "sample_num": 28934
+    }
+}
