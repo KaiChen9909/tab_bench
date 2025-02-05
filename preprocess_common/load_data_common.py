@@ -34,11 +34,11 @@ class data_preporcesser_common():
         y = np.load(os.path.join(path, 'y_train.npy'), allow_pickle=True)
         num_divide, cat_divide = calculate_rho_allocate(X_num, X_cat, num_prep)
 
-        if (rho == 0) and (num_divide + cat_divide > 0):
-            if self.args.epsilon > 0:
-                rho = cdp_rho(0.1*(num_divide+cat_divide)*self.args.epsilon, 0.1*(num_divide+cat_divide)*self.args.delta)
-            else:
-                rho = cdp_rho(0.1*(num_divide+cat_divide)*1.0, 0.1*(num_divide+cat_divide)*1e-5) # this is the default value setting
+        # if (rho == 0) and (num_divide + cat_divide > 0):
+        #     if self.args.epsilon > 0:
+        #         rho = cdp_rho(0.1*(num_divide+cat_divide)*self.args.epsilon, 0.1*(num_divide+cat_divide)*self.args.delta)
+        #     else:
+        #         rho = cdp_rho(0.1*(num_divide+cat_divide)*1.0, 0.1*(num_divide+cat_divide)*1e-5) # this is the default value setting
     
         if X_num is not None:
             if num_prep != 'none':

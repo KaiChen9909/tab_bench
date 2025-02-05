@@ -15,8 +15,8 @@ from method.TabDDPM.data.data_utils import *
 def ddpm_main(args, df, domain, rho, parent_dir, **kwargs):
     # basic config
     if args.epsilon > 0:
-        epsilon = rho*args.epsilon
-        delta = rho*args.delta 
+        epsilon = args.epsilon
+        delta = args.delta 
     else:
         epsilon = None 
         delta = None
@@ -40,6 +40,8 @@ def ddpm_main(args, df, domain, rho, parent_dir, **kwargs):
     base_config['sample']['num_samples'] = train_size
     dump_config(base_config, f'{parent_dir}/config.toml')
 
+    rho_used = kwargs.get('rho_used', None)
+
     # fit the diffusion model
     diffusion_model = finetune(
             **base_config['train']['main'],
@@ -54,6 +56,7 @@ def ddpm_main(args, df, domain, rho, parent_dir, **kwargs):
             device=args.device,
             dp_epsilon = epsilon,
             dp_delta = delta,
+            rho_used = rho_used,
             report_every = args.test
         ) 
 

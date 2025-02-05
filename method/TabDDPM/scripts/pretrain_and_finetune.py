@@ -12,6 +12,7 @@ from opacus import PrivacyEngine
 from method.TabDDPM.model.modules import MLPDiffusion
 from method.TabDDPM.model.diffusion import GaussianMultinomialDiffusion
 from method.TabDDPM.data.dataset import *
+from method.TabDDPM.scripts.noise import get_noise_multiplier
 torch.set_default_dtype(torch.float32) 
 
 def get_model(
@@ -31,7 +32,12 @@ def get_model(
 #         targ.detach().mul_(rate).add_(src.detach(), alpha=1 - rate)
 
 class Trainer:
-    def __init__(self, diffusion, dataloader, lr, weight_decay, steps, device=torch.device('cuda:0'), dp_epsilon = None, dp_delta = None, report_every=False):
+    def __init__( 
+            self, diffusion, dataloader, lr, weight_decay, steps, 
+            device=torch.device('cuda:0'), 
+            dp_epsilon = None, dp_delta = None, rho_used = None,
+            report_every=False
+    ):
         self.diffusion = diffusion
         self.report_every = report_every #if dump loss every epoch
         self.ema_model = deepcopy(self.diffusion)
@@ -48,20 +54,39 @@ class Trainer:
         self.ema_every = 10
         self.dp_epsilon = dp_epsilon
         self.dp_delta = dp_delta
+        self.rho_used = rho_used
+
         if self.dp_epsilon is not None:
             privacy_engine = PrivacyEngine(accountant='rdp')
-            self.diffusion._denoise_fn, self.optimizer, self.dataloader = privacy_engine.make_private_with_epsilon(
+            
+            if self.rho_used > 0:
+                account_history = (np.sqrt(1/(2*self.rho_used)), 1.0, 1)
+                alpha_history = list(10000 + 10000 * np.arange(100)/100)
+            else:
+                account_history = None 
+                alpha_history = None
+            
+            self.diffusion._denoise_fn, self.optimizer, self.dataloader = privacy_engine.make_private(
                 module = self.diffusion._denoise_fn,
-                optimizer = torch.optim.SGD(self.diffusion._denoise_fn.parameters(), lr=lr, weight_decay=weight_decay, momentum = 0.5),
-                # optimizer = torch.optim.Adam(self.diffusion._denoise_fn.parameters(), lr=lr, weight_decay=weight_decay), 
+                optimizer = torch.optim.SGD(self.diffusion._denoise_fn.parameters(), lr=lr, weight_decay=weight_decay, momentum = 0.8),
                 data_loader = dataloader,
-                epochs = self.n_epoch,
+                noise_multiplier = get_noise_multiplier(
+                    target_epsilon = self.dp_epsilon,
+                    target_delta = self.dp_delta,
+                    sample_rate = 1/len(dataloader),
+                    epochs=self.n_epoch,
+                    accountant="rdp",
+                    account_history = account_history,
+                    alpha_history = alpha_history
+                ),
                 max_grad_norm = 1.0,
-                target_epsilon = self.dp_epsilon,
-                target_delta = self.dp_delta
+                batch_first = True,
+                loss_reduction = "mean",
+                noise_generator = None,
+                grad_sample_mode = "hooks",
+                poisson_sampling = True,
+                clipping="flat"
             )
-            print("---------------finish differential privacy setting----------------")
-            print(f'training privacy budget: ({self.dp_epsilon}, {self.dp_delta})')
         else:
             self.optimizer = torch.optim.Adam(self.diffusion._denoise_fn.parameters(), lr=lr, weight_decay=weight_decay)
 
@@ -223,6 +248,7 @@ def finetune(
         seed = 0,
         dp_epsilon = None,
         dp_delta = None,
+        rho_used = None,
         report_every=False
 ): 
     random.seed(seed)
@@ -266,6 +292,7 @@ def finetune(
         device=device,
         dp_epsilon = dp_epsilon,
         dp_delta = dp_delta,
+        rho_used = rho_used,
         report_every = report_every
     )
     finetuner.run_loop()
