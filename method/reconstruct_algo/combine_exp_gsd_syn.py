@@ -51,7 +51,7 @@ def gsd_syn_main(args, df, domain, rho, **kwargs):
     marginals = PrivSyn.two_way_marginal_selection(data.df, data.domain.config, 0.1*rho, 0.8*rho)
     marginal_module1 = Marginals.get_all_kway_combinations(data.domain, k=1, bins=[2, 4, 8, 16, 32])
     marginal_module2 = Marginals.get_outside_kway_combinations(marginals, data.domain, k=2, bins=[2, 4, 8, 16, 32])
-    stat_module = ChainedStatistics([marginal_module1, marginal_module2], rho_allocate=[0.1, 0.9])
+    stat_module = ChainedStatistics([marginal_module1, marginal_module2], rho_allocate=[1.0/9, 8.0/9])
     stat_module.fit(data)
 
     true_stats = stat_module.get_all_true_statistics()

@@ -1,5 +1,5 @@
 {
-    "name": "Bank",
+    "name": "Bank", 
     "id": "bank--default",
     "task_type": "binclass",
     "n_num_features": 7,

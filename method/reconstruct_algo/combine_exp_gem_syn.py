@@ -294,7 +294,7 @@ def gem_syn_main(args, df, domain, rho, parent_dir, **kwargs):
     query_manager2 = QueryManager(data.domain, workloads2)
     real_answers2 = query_manager2.get_answer(data, concat=False) # [[...], [...]]
 
-    eps0 = [np.sqrt(len(workloads1)/(0.2 * rho)), np.sqrt(len(workloads2)/(1.6 * rho))]
+    eps0 = [np.sqrt((0.2 * rho)/len(workloads1)), np.sqrt((1.6 * rho)/len(workloads2))]
 
     gem.setup_data(data.df, proj, data.domain, overrides=['transformer'])
 
