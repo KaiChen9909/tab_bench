@@ -149,16 +149,30 @@ class GEM(object):
             max_idxs=100, max_iters=100, alpha=0.5, marginal_idx = None,
             verbose=False):
 
-        real_answers = torch.tensor(real_answers).to(self.device)
-        real_answers += np.random.normal(loc=0, scale=sensitivity / eps0)
-        real_answers = torch.clamp(real_answers, 0, 1)
+        if isinstance(qm, list):
+            real_answers_list = []
+            queries = []
+            for i in range(len(qm)):
+                real_answer = np.array(real_answers[i])
+                real_answer += np.random.normal(loc=0, scale=sensitivity / eps0[i], size=real_answer.shape)
 
-        queries = torch.tensor(qm.queries).to(self.device).long()
+                real_answers_list.append(real_answers[i])
+                queries += list(qm[i].queries)
+
+            real_answers = np.concatenate(real_answers_list)
+            real_answers = torch.tensor(real_answers).to(self.device)
+            real_answers = torch.clamp(real_answers, 0, 1)
+        else:
+            real_answers = torch.tensor(real_answers).to(self.device)
+            real_answers += np.random.normal(loc=0, scale=sensitivity / eps0)
+            real_answers = torch.clamp(real_answers, 0, 1)
+
+            queries = torch.tensor(qm.queries).to(self.device).long()
 
         # self.past_query_idxs = torch.tensor([])
         # self.past_measurements = torch.tensor([])
         # self.all_max_errors = []
-        self.past_query_idxs = torch.tensor(np.arange(queries.shape[0]))
+        self.past_query_idxs = torch.tensor(np.arange(len(queries)))
         self.past_measurements = real_answers
         self.all_max_errors = []
 
@@ -167,10 +181,6 @@ class GEM(object):
         #     self.schedulerG = optim.lr_scheduler.CosineAnnealingLR(self.optimizerG, 1, eta_min=eta_min)
 
         fake_data = self.generate_fake_data(self.mean, self.std, resample=resample)
-        fake_answers = self._get_fake_answers(fake_data, qm)
-        answer_diffs = real_answers - fake_answers
-
-        ema_error = None
 
         lr = None
         for param_group in self.optimizerG.param_groups:
@@ -281,7 +291,8 @@ def gem_syn_main(args, df, domain, rho, parent_dir, **kwargs):
 
     # workloads = randomKwayData(data, args.workload, args.marginal, seed=args.workload_seed)
     workloads1 = [(x,) for x in proj]
-    workloads2 = PrivSyn.two_way_marginal_selection(data.df, data.domain.config, 0.1*rho, 0.8*rho) # select marginals by privsyn
+    workloads2 = PrivSyn.two_way_marginal_selection(data.df, data.domain.config, 0.1*rho, 0.8*rho)
+    # workloads = workloads1 + workloads2
 
     N = data.df.shape[0]
     # domain_dtype = data.df.max().dtype
@@ -308,8 +319,8 @@ def gem_syn_main(args, df, domain, rho, parent_dir, **kwargs):
             verbose=args.verbose)
     
     print('two-way marginal training')
-    gem.outside_fit(eps0=eps0[1], sensitivity=1 / N, lr=args.lr, eta_min=args.eta_min,
-            qm=query_manager2, real_answers=np.concatenate(real_answers2),
+    gem.outside_fit(eps0=eps0, sensitivity=1 / N, lr=args.lr, eta_min=args.eta_min,
+            qm=[query_manager1, query_manager2], real_answers=[np.concatenate(real_answers1), np.concatenate(real_answers2)],
             max_iters=args.max_iters, alpha=args.alpha,
             # save_num=k_thresh, 
             verbose=args.verbose)
