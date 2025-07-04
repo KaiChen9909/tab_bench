@@ -103,10 +103,19 @@ class PGM_Generator(Mechanism):
             data.domain, iters=self.max_iters, warm_start=True, structural_zeros=zeros
         )
 
-        cl_set = PrivSyn.two_way_marginal_selection(data.df, data.domain.config, 0.1*self.rho, 0.9*self.rho) # selection use 0.1rho
+        sigma = np.sqrt(len(data.domain.attrs)/(0.2*self.rho))
+        for attr in data.domain.attrs:
+            cl = (attr, )
+            n = data.domain.size(cl)
+            Q = Identity(n)
+            x = data.project(cl).datavector()
+            y = x + self.gaussian_noise(sigma, n)
+            measurements.append((Q, y, sigma, cl))
+
+        cl_set = PrivSyn.two_way_marginal_selection(data.df, data.domain.config, 0.1*self.rho, 0.8*self.rho) # selection use 0.1rho
         print("Selected marginals:", cl_set)
         
-        sigma = np.sqrt(len(cl_set)/(1.8*self.rho)) # use 0.9rho 
+        sigma = np.sqrt(len(cl_set)/(1.6*self.rho)) # use 0.8rho 
         
         for i in range(len(cl_set)):
             cl = cl_set[i] 
