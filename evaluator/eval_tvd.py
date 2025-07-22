@@ -93,7 +93,7 @@ def tvd_main(
 
     data_shape = real_data.shape[1]
 
-    l1_list = {'1way margin':[], '2way margin':[]}
+    l1_list = {'1way margin': -1, '2way margin': -1}
     if dim == 2:
         margin_error_comb = []
         attr_num = 2
@@ -104,7 +104,7 @@ def tvd_main(
                 marginal_TVD(real_data, fake_data, combination, attr_num)
             )
 
-        l1_list[f'{attr_num}way margin'].append(np.mean(margin_error_comb))
+        l1_list[f'{attr_num}way margin'] = np.mean(margin_error_comb)
         print(f'finish {attr_num}-way marigin TVD evaluation, error is', np.mean(margin_error_comb))
     else:
         for attr_num in range(1,3):
@@ -120,7 +120,7 @@ def tvd_main(
                     marginal_TVD(real_data, fake_data, combination, attr_num)
                 )
 
-            l1_list[f'{attr_num}way margin'].append(np.mean(margin_error_comb))
+            l1_list[f'{attr_num}way margin'] = np.mean(margin_error_comb)
             print(f'finish {attr_num}-way marigin TVD evaluation, error is', np.mean(margin_error_comb))
     
     return l1_list

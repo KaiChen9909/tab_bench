@@ -15,7 +15,9 @@ from evaluator.eval_mlp import train_mlp
 from evaluator.eval_transformer import train_transformer
 from evaluator.eval_simple import train_simple 
 from evaluator.eval_tvd import make_tvd
+from evaluator.eval_cramer import make_cramer
 from evaluator.eval_query import make_query
+from evaluator.eval_cond_query import make_cond_query
 from evaluator.eval_sample import eval_sampler
 
 
@@ -119,7 +121,9 @@ def eval_seeds(
         'xgb': SeedsMetricsReport()
     }
     query_report = []
+    cond_query_report = []
     tvd_report = {}
+    cramer_report = {}
 
     # whether these eval model is supported
     eval_support = {
@@ -175,6 +179,22 @@ def eval_seeds(
                 else:
                     for k,v in tvd_error.items():
                         tvd_report[k].append(v) 
+
+                cond_query_report.append(make_cond_query(
+                        synthetic_data_path,
+                        data_path,
+                        task_type,
+                        query_times = 1000,
+                        seeds = seed
+                    ))
+                
+                cramer_error = make_cramer(synthetic_data_path, data_path)
+                if not cramer_report:
+                    for k,v in cramer_error.items():
+                        cramer_report[k] = [v]
+                else:
+                    for k,v in cramer_error.items():
+                        cramer_report[k].append(v) 
                 
     try:
         shutil.rmtree(dir_)
@@ -219,7 +239,6 @@ def eval_seeds(
     dump_json(eval_dict, os.path.join(parent_dir, 'eval_query.json'))
     
 
-    # summarize l1 result
     tvd_report_final = {}
     for k,v in tvd_report.items():
         tvd_report_final[k] = {}
@@ -236,6 +255,43 @@ def eval_seeds(
         eval_dict = {'synthetic': tvd_report_final}
 
     dump_json(eval_dict, os.path.join(parent_dir, 'eval_tvd.json'))
+
+
+    # conditional query results
+    cond_query_report_final = {
+            'n_datasets' : n_datasets,
+            'eval_times' : 1000,
+            'error_mean' : np.mean(cond_query_report)
+        }
+    print('='*100)
+    print('conditional query error evaluation:')
+    print(cond_query_report_final)
+    if os.path.exists(parent_dir/ f"eval_cond_query.json"):
+        eval_dict = load_json(parent_dir / f"eval_cond_query.json")
+        eval_dict = eval_dict | {'synthetic': cond_query_report_final}
+    else: 
+        eval_dict = {'synthetic': cond_query_report_final}
+    
+    dump_json(eval_dict, os.path.join(parent_dir, 'eval_cond_query.json'))
+    
+
+    # cramer' V measure results
+    cramer_report_final = {}
+    for k,v in cramer_report.items():
+        cramer_report_final[k] = {}
+        cramer_report_final[k]['mean'] = np.mean(cramer_report[k])
+        cramer_report_final[k]['std'] = np.std(cramer_report[k]) 
+
+    print('='*100)
+    print('cramer error evaluation:')
+    print(cramer_report_final)
+    if os.path.exists(parent_dir/ f"eval_cramer.json"):
+        eval_dict = load_json(parent_dir / f"eval_cramer.json")
+        eval_dict = eval_dict | {'synthetic': cramer_report_final}
+    else: 
+        eval_dict = {'synthetic': cramer_report_final}
+
+    dump_json(eval_dict, os.path.join(parent_dir, 'eval_cramer.json'))
     
     return 0 
 
