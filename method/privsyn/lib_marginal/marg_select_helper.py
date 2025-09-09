@@ -92,7 +92,9 @@ def calculate_indif(logger, df, dataset_domain, original_domain, dataset_name, r
             indif_index += 1
 
     # add noise
+    n = np.sum(pair_marg.count_matrix)
     if rho != 0.0:
+        indif_df.error *= n
         indif_df.error += np.random.normal(
             scale=np.sqrt(8 * indif_df.shape[0]/rho), size=indif_df.shape[0])
 
